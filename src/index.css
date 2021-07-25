@@ -7,21 +7,42 @@
     font-family: "Roboto", sans-serif;
 }
 .sidebar {
-    background: #4b4b4b;
+    background: #1a1a1a;
     color: #e0dad9;
     padding: 1rem 2rem;
     grid-column: span 2;
+    overflow: auto;
 }
 
-.content {
+.wrapper {
     grid-column: span 8;
-    padding: 1rem 2rem;
+    /*padding: 1rem 2rem;*/
+    background: #2f2f2f;
 }
 
 .App {
     display: grid;
     grid-template-columns: repeat(10, 1fr);
-    gap: 0.5rem;
+    /*gap: 0.5rem;*/
     width: 100vw;
     height: 100vh;
+}
+
+.in-node {
+    cursor: pointer;
+    border-radius: 0.125rem;
+    border: 0.125rem solid rgb(0, 255, 255);
+
+}
+
+.out-node {
+    cursor: pointer;
+    border-radius: 0.125rem;
+    border: 0.125rem solid rgb(0, 255, 50);
+
+}
+
+.content {
+    height: 100%;
+    width: 100%;
 }
