@@ -29,20 +29,62 @@
 }
 
 .in-node {
+    margin: 0.75rem 0;
     cursor: pointer;
     border-radius: 0.125rem;
-    border: 0.125rem solid rgb(0, 255, 255);
-
+    border: 0.125rem solid rgb(0,0,0);
+    background: rgb(0, 255, 255);
+    color: #1a1a1a;
+    text-align: center;
+    padding: 0.75rem 0;
+    max-width: 150px;
 }
 
 .out-node {
+    margin: 0.75rem 0;
+    cursor: pointer;
+    border-radius: 0.25rem;
+    border: 0.125rem solid rgb(0,0,0);
+    background: rgb(0, 255, 50);
+    color: #1a1a1a;
+    text-align: center;
+    padding: 0.75rem 0;
+    max-width: 150px;
+}
+
+.double-node {
+    margin: 0.75rem 0;
     cursor: pointer;
     border-radius: 0.125rem;
-    border: 0.125rem solid rgb(0, 255, 50);
-
+    border: 0.125rem solid rgb(0,0,0);
+    background: rgb(255, 0, 255);
+    color: #1a1a1a;
+    text-align: center;
+    padding: 0.75rem 0;
+    max-width: 150px;
 }
 
 .content {
     height: 100%;
     width: 100%;
+}
+
+.button {
+    margin: 0.25rem;
+    display: inline-block;
+    background: #36cbc5;
+    color: #1a1a1a;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: bold;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+}
+
+.button:active {
+    transform: scale(0.95);
 }

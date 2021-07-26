@@ -13,6 +13,9 @@ function App() {
     // Creating the React-Diagrams Engine
     const engine = createEngine();
 
+    // Creating empty model for state storing
+    let savedModel: string;
+
     // Adding nodes with ports
     const node1 = new DefaultNodeModel({
         name: "Node 1",
@@ -30,7 +33,7 @@ function App() {
     // let port2 = node2.addOutPort("Out");
 
     // Initiating a diagram. You could skip this part if you are deserializing a pre-existing model
-    const model = new DiagramModel();
+    let model = new DiagramModel();
     model.addAll(node1, node2);
     engine.setModel(model);
 
@@ -38,34 +41,38 @@ function App() {
     const serializeModel = () => {
         let modelString = JSON.stringify(model.serialize())
         console.log(modelString)
+        savedModel = modelString
     }
 
     // Helper function for deserializing a model based on the initial model, modifying only the position and name of the first node
     const deserModel = () => {
         // Needed because node ID's change on every refresh
-        const fakeModelStr = JSON.stringify(model.serialize())
-        let fakeModel = JSON.parse(fakeModelStr)
+        let fakeModel = JSON.parse(savedModel)
         let newFakeModel = new DiagramModel();
-        // This part could be skipped if importing a pre-existing model from a file
-        const nodes = model.getNodes()
-        const node1ID = nodes[0].getID()
 
-        // Modifying the fakemodel position and name but this is not necessary when importing
-        fakeModel.layers[1].models[node1ID].x = 500
-        fakeModel.layers[1].models[node1ID].y = 500
-        fakeModel.layers[1].models[node1ID].name = "New Node 1"
+        // Commenting this part out since we are actually skipping it now.
+        // // This part could be skipped if importing a pre-existing model from a file
+        // const nodes = model.getNodes()
+        // const node1ID = nodes[0].getID()
+
+        // // Modifying the fakemodel position and name but this is not necessary when importing
+        // fakeModel.layers[1].models[node1ID].x = 500
+        // fakeModel.layers[1].models[node1ID].y = 500
+        // fakeModel.layers[1].models[node1ID].name = "New Node 1"
 
         // Actual import of new model
         newFakeModel.deserializeModel(fakeModel, engine)
         engine.setModel(newFakeModel)
+        // Important to keep since the drag & drop functions reference model and not newFakeModel
+        model = newFakeModel
     }
 
   return (
     <div className="App">
       <div className="sidebar">
         <h1>Options</h1>
-        <button onClick={deserModel}>Import from current model</button>
-        <button onClick={serializeModel}>Export</button>
+        <button onClick={deserModel} className="button">Restore Model</button>
+        <button onClick={serializeModel} className="button">Save Model</button>
         {/* Draggable node. The dataTransfer.setData allows us to listen to the event on the canvas and see what is being dragged */}
         <div
           className="in-node"
@@ -84,6 +91,14 @@ function App() {
           }}>
           Out Node
         </div>
+        <div
+          className="double-node"
+          draggable={true}
+          onDragStart={event => {
+            event.dataTransfer.setData("tray-diagram-node", JSON.stringify({type: "double"}))
+          }}>
+          Double Node
+        </div>
       </div>
       {/* We need to use a wrapper since the canvas widget doesn't allow for onDrag/onDrop events on itself. */}
       <div
@@ -98,9 +113,13 @@ function App() {
           if (data.type === "in") {
             node = new DefaultNodeModel(`Node${nodesCount+1}`, "rgb(0,255,255)");
             node.addInPort("In");
-          } else {
+          } else if (data.type === "out") {
             node = new DefaultNodeModel(`Node${nodesCount+1}`, "rgb(0,255,50)");
             node.addOutPort("Out");
+          } else {
+            node = new DefaultNodeModel(`Node${nodesCount+1}`, "rgb(255,0,255)");
+            node.addOutPort("Out")
+            node.addInPort("In")
           }
 
           // After adding the node to the model notice the engine.setModel call to update state, without it the model wont update in the DOM
