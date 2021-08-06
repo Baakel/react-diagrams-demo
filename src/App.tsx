@@ -1,13 +1,35 @@
 import React from 'react';
-import * as _ from "lodash"
+import * as _ from "lodash";
 
 import createEngine, {
-    DefaultLinkModel,
-    DefaultNodeModel,
-    DiagramModel
+  DefaultLinkModel,
+  DefaultNodeModel,
+  DiagramModel
 } from "@projectstorm/react-diagrams";
 
-import { CanvasWidget } from '@projectstorm/react-canvas-core'
+import { CanvasWidget, Action, ActionEvent, InputType } from '@projectstorm/react-canvas-core'
+
+interface NodeConfigOptions {
+  clicked?: boolean;
+}
+
+class ConfigNodeAction extends Action {
+  constructor(options: NodeConfigOptions = {}) {
+    options = {
+      clicked: false,
+      ...options
+    };
+    super({
+      type: InputType.MOUSE_UP,
+      fire: (event: ActionEvent) => {
+        console.log(event)
+        const selectedEntities = this.engine.getModel().getSelectedEntities();
+        console.log(selectedEntities)
+        this.engine.repaintCanvas();
+      }
+    });
+  }
+}
 
 function App() {
     // Creating the React-Diagrams Engine
@@ -32,10 +54,13 @@ function App() {
     let portIn2 = node2.addInPort("In")
     // let port2 = node2.addOutPort("Out");
 
+    let link1 = port1.link(portIn2)
+
     // Initiating a diagram. You could skip this part if you are deserializing a pre-existing model
     let model = new DiagramModel();
-    model.addAll(node1, node2);
+    model.addAll(node1, node2, link1)
     engine.setModel(model);
+    engine.getActionEventBus().registerAction(new ConfigNodeAction());
 
     // Helper function for serializing current model.
     const serializeModel = () => {
@@ -48,7 +73,6 @@ function App() {
     const deserModel = () => {
         // Needed because node ID's change on every refresh
         let fakeModel = JSON.parse(savedModel)
-        let newFakeModel = new DiagramModel();
 
         // Commenting this part out since we are actually skipping it now.
         // // This part could be skipped if importing a pre-existing model from a file
@@ -61,10 +85,8 @@ function App() {
         // fakeModel.layers[1].models[node1ID].name = "New Node 1"
 
         // Actual import of new model
-        newFakeModel.deserializeModel(fakeModel, engine)
-        engine.setModel(newFakeModel)
-        // Important to keep since the drag & drop functions reference model and not newFakeModel
-        model = newFakeModel
+        model.deserializeModel(fakeModel, engine)
+        engine.setModel(model)
     }
 
   return (
