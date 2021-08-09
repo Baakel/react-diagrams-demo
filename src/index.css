@@ -64,6 +64,18 @@
     max-width: 150px;
 }
 
+.custom-node-sidebar {
+    margin: 0.75rem 0;
+    cursor: pointer;
+    border-radius: 0.125rem;
+    border: 0.125rem solid rgb(0,0,0);
+    background: rgb(0, 150, 255);
+    color: #1a1a1a;
+    text-align: center;
+    padding: 0.75rem 0;
+    max-width: 150px;
+}
+
 .content {
     height: 100%;
     width: 100%;
@@ -87,4 +99,35 @@
 
 .button:active {
     transform: scale(0.95);
+}
+
+.modal {
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    font-size: 16px;
+}
+
+.modal-content {
+    width: 500px;
+    background-color: #343434;
+    border-radius: 0.625rem;
+    font-size: 16px;
+}
+
+.modal-header, .modal-footer {
+    padding: 0.625rem;
+}
+
+.modal-body {
+    padding: 0.625rem;
+    border-top: 1px solid #2f2f2f;
+    border-bottom: 1px solid #2f2f2f;
 }

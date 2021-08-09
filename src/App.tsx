@@ -1,39 +1,20 @@
-import React from 'react';
+import React, {useState} from 'react';
 import * as _ from "lodash";
-
 import createEngine, {
   DefaultLinkModel,
   DefaultNodeModel,
   DiagramModel
 } from "@projectstorm/react-diagrams";
+import { CanvasWidget, Action, ActionEvent, InputType, BaseEvent } from '@projectstorm/react-canvas-core'
+import {CustomNodeFactory} from './custom-node-models/CustomNodeFactory'
+import {CustomNodeModel} from "./custom-node-models/CustomNodeModel";
 
-import { CanvasWidget, Action, ActionEvent, InputType } from '@projectstorm/react-canvas-core'
-
-interface NodeConfigOptions {
-  clicked?: boolean;
-}
-
-class ConfigNodeAction extends Action {
-  constructor(options: NodeConfigOptions = {}) {
-    options = {
-      clicked: false,
-      ...options
-    };
-    super({
-      type: InputType.MOUSE_UP,
-      fire: (event: ActionEvent) => {
-        console.log(event)
-        const selectedEntities = this.engine.getModel().getSelectedEntities();
-        console.log(selectedEntities)
-        this.engine.repaintCanvas();
-      }
-    });
-  }
-}
 
 function App() {
     // Creating the React-Diagrams Engine
     const engine = createEngine();
+
+    engine.getNodeFactories().registerFactory(new CustomNodeFactory())
 
     // Creating empty model for state storing
     let savedModel: string;
@@ -54,13 +35,20 @@ function App() {
     let portIn2 = node2.addInPort("In")
     // let port2 = node2.addOutPort("Out");
 
+    const node3 = new CustomNodeModel({
+      color: "rgb(250,240,0)",
+      name: "Custom Node 1"
+    })
+    node3.setPosition(300,300)
+
     let link1 = port1.link(portIn2)
 
     // Initiating a diagram. You could skip this part if you are deserializing a pre-existing model
     let model = new DiagramModel();
-    model.addAll(node1, node2, link1)
+    model.addAll(node1, node2, node3, link1)
+
     engine.setModel(model);
-    engine.getActionEventBus().registerAction(new ConfigNodeAction());
+    // engine.getActionEventBus().registerAction(new ConfigNodeAction());
 
     // Helper function for serializing current model.
     const serializeModel = () => {
@@ -121,6 +109,14 @@ function App() {
           }}>
           Double Node
         </div>
+        <div
+          className="custom-node-sidebar"
+          draggable={true}
+          onDragStart={event => {
+            event.dataTransfer.setData("tray-diagram-node", JSON.stringify({type: "custom"}))
+          }}>
+          Custom Node
+        </div>
       </div>
       {/* We need to use a wrapper since the canvas widget doesn't allow for onDrag/onDrop events on itself. */}
       <div
@@ -131,13 +127,15 @@ function App() {
           let nodesCount = _.keys(engine.getModel().getNodes()).length
 
           // You can add other node types with multiple ports if you want to.
-          let node: DefaultNodeModel;
+          let node: DefaultNodeModel | CustomNodeModel;
           if (data.type === "in") {
             node = new DefaultNodeModel(`Node${nodesCount+1}`, "rgb(0,255,255)");
             node.addInPort("In");
           } else if (data.type === "out") {
-            node = new DefaultNodeModel(`Node${nodesCount+1}`, "rgb(0,255,50)");
+            node = new DefaultNodeModel(`Node${nodesCount + 1}`, "rgb(0,255,50)");
             node.addOutPort("Out");
+          } else if (data.type === "custom") {
+            node = new CustomNodeModel({name:`CustomNode${nodesCount + 1}`, color: "rgb(0,150,255)"});
           } else {
             node = new DefaultNodeModel(`Node${nodesCount+1}`, "rgb(255,0,255)");
             node.addOutPort("Out")
@@ -154,6 +152,10 @@ function App() {
           // The preventDefault function is needed for the drop to work. Otherwise it tries to import the div from clipboard.
           event.preventDefault();
         }}
+        // onDoubleClick={event => {
+        //   console.log("Event is")
+        //   console.log(event)
+        // }}
       >
         <CanvasWidget
           engine={engine}
