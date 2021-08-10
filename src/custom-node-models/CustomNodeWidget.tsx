@@ -57,7 +57,8 @@ export interface CustomNodeWidgetState {
   modifiedName: string;
 }
 
-export function handleDoubleClick(event: React.MouseEvent<HTMLDivElement>, target: any) {
+export function handleRightClick(event: React.MouseEvent<HTMLDivElement>, target: any) {
+  event.preventDefault()
   // console.log(event.target)
   // console.log(target.node)
   // target.node.color = "rgb(0,150,255)"
@@ -113,7 +114,7 @@ export class CustomNodeWidget extends React.Component<CustomNodeWidgetProps, Cus
         background={this.props.node.color}
         selected={this.props.node.isSelected()}
         data-default-node-name={this.props.node.name}
-        onDoubleClick={(event) => {handleDoubleClick(event, this)}}
+        onContextMenu={(event) => {handleRightClick(event, this)}}
       >
         <CTitle>
           <CTitleName>{this.props.node.name}</CTitleName>
