@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 import styled from "@emotion/styled";
 import {DefaultPortLabel, DiagramEngine, PortModel, PortModelGenerics, PortWidget} from "@projectstorm/react-diagrams";
 import {CustomNodeModel} from "./CustomNodeModel";
+import {CameraPortModel, CameraPortModelGenerics, PosePortModel, PosePortModelGenerics} from "./CustomPortModel";
 import Modal from "../widgets/Modal";
 
 export const CNode = styled.div<{background: string; selected:boolean}>`
@@ -93,6 +94,18 @@ export class CustomNodeWidget extends React.Component<CustomNodeWidgetProps, Cus
     const inPort: PortModel<PortModelGenerics> = this.props.node.getPort('in')
     // @ts-ignore
     const outPort: PortModel<PortModelGenerics> = this.props.node.getPort('out')
+
+    // @ts-ignore
+    const playPort: CameraPortModel<CameraPortModelGenerics> = this.props.node.getPort('player')
+    // @ts-ignore
+    const camPort: CameraPortModel<CameraPortModelGenerics> = this.props.node.getPort('stream')
+    // @ts-ignore
+    const cloudPort: CameraPortModel<CameraPortModelGenerics> = this.props.node.getPort('cloud')
+
+    // @ts-ignore
+    const skeletonPort: PosePortModel<PosePortModelGenerics> = this.props.node.getPort('skeleton')
+    // @ts-ignore
+    const jointPort: PosePortModel<PosePortModelGenerics> = this.props.node.getPort('joint')
 
     // return (
     //   <div className="custom-node" onDoubleClick={(event) => {

@@ -1,5 +1,6 @@
 import {NodeModel, DefaultPortModel} from "@projectstorm/react-diagrams";
 import {BaseModelOptions, DeserializeEvent} from '@projectstorm/react-canvas-core'
+import {CameraPortModel, PosePortModel} from "./CustomPortModel";
 
 export interface CustomNodeModelOptions extends BaseModelOptions {
   name?: string;
@@ -11,6 +12,11 @@ export class CustomNodeModel extends NodeModel {
   color: string;
   protected portsIn: DefaultPortModel[];
   protected portsOut: DefaultPortModel[];
+  protected camPorts: CameraPortModel[];
+  protected cloudPorts: CameraPortModel[];
+  protected playPorts: CameraPortModel[];
+  protected skeletonPorts: PosePortModel[];
+  protected jointPorts: PosePortModel[];
 
   constructor(options: CustomNodeModelOptions = {}) {
     super({
@@ -22,19 +28,60 @@ export class CustomNodeModel extends NodeModel {
     this.name = options.name || 'Custom Node'
     this.portsIn = [];
     this.portsOut = [];
+    this.camPorts = [];
+    this.playPorts = [];
+    this.cloudPorts = [];
+    this.skeletonPorts = [];
+    this.jointPorts = [];
+
 
     this.addPort(
-      new DefaultPortModel({
-        in: true,
-        name: 'in'
+      new CameraPortModel({
+        player: true,
+        name: 'player'
       })
     )
+
     this.addPort(
-      new DefaultPortModel({
-        in: false,
-        name: 'out'
+      new CameraPortModel({
+        player: false,
+        name: 'stream'
       })
     )
+
+    this.addPort(
+      new CameraPortModel({
+        player: false,
+        name: 'cloud'
+      })
+    )
+
+    this.addPort(
+      new PosePortModel({
+        skeleton: false,
+        name: 'joint'
+      })
+    )
+
+    this.addPort(
+      new PosePortModel({
+        skeleton: true,
+        name: 'skeleton'
+      })
+    )
+
+    // this.addPort(
+    //   new DefaultPortModel({
+    //     in: true,
+    //     name: 'in'
+    //   })
+    // )
+    // this.addPort(
+    //   new DefaultPortModel({
+    //     in: false,
+    //     name: 'out'
+    //   })
+    // )
   }
 
   serialize() {
